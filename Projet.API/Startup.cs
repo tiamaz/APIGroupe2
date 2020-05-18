@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -13,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Projet.API.Data;
 using Projet.API.Model;
 
@@ -50,14 +53,23 @@ namespace Projet.API
             builder.AddSignInManager<SignInManager<User>>(); 
 
 
-         
-     
+             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                        .AddJwtBearer(Options => {
+                        Options.TokenValidationParameters = new TokenValidationParameters{
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
+                                Configuration.GetSection("AppSettings:Token").Value)),
+                                ValidateIssuer = false,
+                                ValidateAudience = false
+                                };
+                        });
 
             services.AddAutoMapper(typeof(Startup));
-    
             services.AddControllers();
+
         }
 
+       
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -70,6 +82,7 @@ namespace Projet.API
 
             app.UseRouting();
 
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

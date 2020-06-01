@@ -68,7 +68,7 @@ namespace Projet.API.Controllers
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
             var user = await _userManager.FindByNameAsync(userForLoginDto.UserName);
-
+    
             var Result = await _signInManager.CheckPasswordSignInAsync(
                 user, userForLoginDto.Password, false);
 

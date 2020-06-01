@@ -39,7 +39,7 @@ namespace Projet.API
             
             IdentityBuilder builder = services.AddIdentityCore<User>(
             opt =>{
-                    opt.Password.RequireDigit = false;
+                opt.Password.RequireDigit = false;
                 opt.Password.RequiredLength = 4;
                 opt.Password.RequireNonAlphanumeric = false;
                 opt.Password.RequireUppercase = false;
@@ -66,6 +66,11 @@ namespace Projet.API
 
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
+
+
+            //services.AddSingleton()
+            //services.AddTransient
+            services.AddScoped<IGestionRepository, GestionRepository>();
 
         }
 
